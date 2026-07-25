@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema CRUD Modular - Git Flow</title>
+
+    <!-- Tailwind CSS v4.0 vía Browser Build CDN -->
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen py-10 px-4">
+    <div class="max-w-4xl mx-auto space-y-6">
+        
+        <!-- Header / Banner -->
+        <header class="bg-indigo-600 text-white p-6 rounded-2xl shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight">Gestión de Usuarios</h1>
+                <p class="text-indigo-200 text-sm mt-1">Proyecto CRUD Modular con Git Flow & Tailwind v4.0</p>
+            </div>
+            <span id="session-badge" class="bg-indigo-700/60 backdrop-blur border border-indigo-400/30 text-indigo-100 text-xs px-3 py-1.5 rounded-full font-medium">
+                Sesión: Cargando...
+            </span>
+        </header>
+
+        <!-- Card Formulario -->
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-slate-800">Registrar / Editar Usuario</h2>
+                <span id="status-message" class="text-xs font-medium text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">Estado: Listo</span>
+            </div>
+
+            <form id="user-form" class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                <input type="hidden" id="user-id">
+                
+                <div>
+                    <input type="text" id="user-name" placeholder="Nombre completo" required
+                           class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                </div>
+
+                <div>
+                    <input type="email" id="user-email" placeholder="Correo electrónico" required
+                           class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                </div>
+
+                <div>
+                    <select id="user-role" required
+                            class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-slate-600">
+                        <option value="">Selecciona Rol...</option>
+                        <option value="Miembro">Miembro</option>
+                        <option value="Administrador">Administrador</option>
+                        <option value="Desarrollador">Desarrollador</option>
+                    </select>
+                </div>
+
+                <div>
+                    <button type="submit" id="btn-save"
+                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm py-2 px-4 rounded-lg transition-colors duration-200 shadow-sm cursor-pointer">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Card Tabla de Datos -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-6 border-b border-slate-100">
+                <h3 class="text-lg font-semibold text-slate-800">Usuarios Registrados</h3>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-medium">
+                            <th class="p-4">ID</th>
+                            <th class="p-4">Usuario</th>
+                            <th class="p-4">Email</th>
+                            <th class="p-4">Rol</th>
+                            <th class="p-4">Registro</th>
+                            <th class="p-4 text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-table-body" class="divide-y divide-slate-100 text-slate-700">
+                        <!-- Filas inyectadas dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Carga del sistema JS -->
+    <script type="module" src="../src/app.js"></script>
+</body>
+</html>
