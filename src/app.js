@@ -1,21 +1,16 @@
+import { Database } from './config/database.js';
 import { checkUserSession } from './modules/auth/login.js';
 import { validateUserInput } from './modules/validation/validation.js';
 import { processSubscription } from './modules/payment/payment.js';
 import { DashboardController } from './modules/dashboard/dashboard.js';
 
-// Base de datos inicial / fallback si el almacenamiento está vacío
-const initialUsers = [
-    { id: 1, name: 'Carlos Mendoza', email: 'carlos@example.com', role: 'Miembro', createdAt: '2026-03-15' },
-    { id: 2, name: 'Ana Rodríguez', email: 'ana@example.com', role: 'Administrador', createdAt: '2026-04-10' }
-];
+// 1. Obtener datos iniciales mediante el módulo Database
+let users = Database.getUsers();
 
-// Cargar usuarios desde localStorage o inicializar
-let users = JSON.parse(localStorage.getItem('crud_users_data')) || initialUsers;
-
-// Instancia del controlador de interfaz
+// 2. Instanciar controlador para la interfaz de usuario
 const dashboard = new DashboardController('user-table-body');
 
-// Elementos del DOM
+// 3. Captura de elementos DOM
 const form = document.getElementById('user-form');
 const userIdInput = document.getElementById('user-id');
 const userNameInput = document.getElementById('user-name');
@@ -24,17 +19,17 @@ const userRoleInput = document.getElementById('user-role');
 const statusMsg = document.getElementById('status-message');
 const sessionBadge = document.getElementById('session-badge');
 
-// Guardar en la memoria persistente del navegador
+// 4. Persistir cambios en el módulo Database
 function saveToStorage() {
-    localStorage.setItem('crud_users_data', JSON.stringify(users));
+    Database.saveUsers(users);
 }
 
-// Renderizar la tabla de datos
+// 5. Renderizar la tabla de la interfaz
 function refreshUI() {
     dashboard.render(users, handleEdit, handleDelete);
 }
 
-// Cargar datos en el formulario para editar (UPDATE)
+// 6. Manejo de edición (UPDATE - Cargar en formulario)
 function handleEdit(user) {
     userIdInput.value = user.id;
     userNameInput.value = user.name;
@@ -47,7 +42,7 @@ function handleEdit(user) {
     }
 }
 
-// Eliminar un registro (DELETE)
+// 7. Manejo de eliminación (DELETE)
 function handleDelete(id) {
     if (confirm(`¿Confirmas que deseas eliminar al usuario #${id}?`)) {
         users = users.filter(u => u.id !== id);
@@ -61,7 +56,7 @@ function handleDelete(id) {
     }
 }
 
-// Evento Submit del formulario (CREATE / UPDATE)
+// 8. Event Listener del formulario (CREATE / UPDATE)
 form.addEventListener('submit', (e) => {
     e.preventDefault();
     
@@ -70,7 +65,7 @@ form.addEventListener('submit', (e) => {
     const email = userEmailInput.value;
     const role = userRoleInput.value;
 
-    // Validación mediante el módulo de validación
+    // Validación de entradas
     const validation = validateUserInput(name, email, role);
     if (!validation.valid) {
         alert(validation.message);
@@ -94,7 +89,7 @@ form.addEventListener('submit', (e) => {
             createdAt: new Date().toISOString()
         };
         
-        // Simulación de transacción del módulo de pagos
+        // Simulación del módulo de suscripciones / pagos
         processSubscription(newUser.id, 'Free Tier');
         
         users.push(newUser);
@@ -104,14 +99,14 @@ form.addEventListener('submit', (e) => {
         }
     }
 
-    // Limpiar formulario y guardar cambios
+    // Resetear formulario y guardar
     form.reset();
     userIdInput.value = '';
     saveToStorage();
     refreshUI();
 });
 
-// Inicialización de Sesión y Renderizado Inicial
+// 9. Inicialización de sesión y render inicial
 const session = checkUserSession();
 if (sessionBadge && session) {
     sessionBadge.textContent = `Sesión: ${session.user} (${session.role})`;
